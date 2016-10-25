@@ -36,18 +36,21 @@ va_start(args, _last_arg_); \
 [NSObject setInv:inv withSig:sig andArgs:args]; \
 va_end(args);
 
+///发送消息并返回对象 允许多参数
 - (id)performSelectorWithArgs:(SEL)sel, ...{
     INIT_INV(sel, nil);
     [inv invoke];
     return [NSObject getReturnFromInv:inv withSig:sig];
 }
 
+///延迟执行
 - (void)performSelectorWithArgs:(SEL)sel afterDelay:(NSTimeInterval)delay, ...{
     INIT_INV(delay, );
     [inv retainArguments];
     [inv performSelector:@selector(invoke) withObject:nil afterDelay:delay];
 }
 
+///在主线程执行
 - (id)performSelectorWithArgsOnMainThread:(SEL)sel waitUntilDone:(BOOL)wait, ...{
     INIT_INV(wait, nil);
     if (!wait) [inv retainArguments];
@@ -62,6 +65,7 @@ va_end(args);
     return wait ? [NSObject getReturnFromInv:inv withSig:sig] : nil;
 }
 
+///创建一个子线程并执行
 - (void)performSelectorWithArgsInBackground:(SEL)sel, ...{
     INIT_INV(sel, );
     [inv retainArguments];
@@ -70,6 +74,7 @@ va_end(args);
 
 #undef INIT_INV
 
+///取得返回值
 + (id)getReturnFromInv:(NSInvocation *)inv withSig:(NSMethodSignature *)sig {
     NSUInteger length = [sig methodReturnLength];
     if (length == 0) return nil;
@@ -138,6 +143,7 @@ return @(ret); \
 #undef return_with_number
 }
 
+///设置inv的参数
 + (void)setInv:(NSInvocation *)inv withSig:(NSMethodSignature *)sig andArgs:(va_list)args {
     NSUInteger count = [sig numberOfArguments];
     for (int index = 2; index < count; index++) {
@@ -319,6 +325,7 @@ else if (size <= 4 * _size_ ) { \
     [self performSelector:selector withObject:nil afterDelay:delay];
 }
 
+///swizzle实例方法
 + (BOOL)swizzleInstanceMethod:(SEL)originalSel with:(SEL)newSel {
     Method originalMethod = class_getInstanceMethod(self, originalSel);
     Method newMethod = class_getInstanceMethod(self, newSel);
@@ -338,6 +345,7 @@ else if (size <= 4 * _size_ ) { \
     return YES;
 }
 
+///swizzle类方法
 + (BOOL)swizzleClassMethod:(SEL)originalSel with:(SEL)newSel {
     Class class = object_getClass(self);
     Method originalMethod = class_getInstanceMethod(class, originalSel);
@@ -371,6 +379,7 @@ else if (size <= 4 * _size_ ) { \
     return [NSString stringWithUTF8String:class_getName([self class])];
 }
 
+///利用归档实现深拷贝
 - (id)deepCopy {
     id obj = nil;
     @try {

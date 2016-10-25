@@ -1,4 +1,4 @@
-//
+//!
 //  NSObject+YYAddForKVO.m
 //  YYCategories <https://github.com/ibireme/YYCategories>
 //
@@ -21,6 +21,7 @@ YYSYNTH_DUMMY_CLASS(NSObject_YYAddForKVO)
 
 static const int block_key;
 
+///_YYNSObjectKVOBlockTarget封装了回调以及target
 @interface _YYNSObjectKVOBlockTarget : NSObject
 
 @property (nonatomic, copy) void (^block)(__weak id obj, id oldVal, id newVal);
@@ -87,10 +88,12 @@ static const int block_key;
     [dic removeObjectForKey:keyPath];
 }
 
+///移除所有的观察者
 - (void)removeObserverBlocks {
     NSMutableDictionary *dic = [self _yy_allNSObjectObserverBlocks];
     [dic enumerateKeysAndObjectsUsingBlock: ^(NSString *key, NSArray *arr, BOOL *stop) {
         [arr enumerateObjectsUsingBlock: ^(id obj, NSUInteger idx, BOOL *stop) {
+            //obj -> _YYNSObjectKVOBlockTarget
             [self removeObserver:obj forKeyPath:key];
         }];
     }];
@@ -98,6 +101,7 @@ static const int block_key;
     [dic removeAllObjects];
 }
 
+///字典 key/path为键 : _YYNSObjectKVOBlockTarget对象数组为值
 - (NSMutableDictionary *)_yy_allNSObjectObserverBlocks {
     NSMutableDictionary *targets = objc_getAssociatedObject(self, &block_key);
     if (!targets) {

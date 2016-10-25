@@ -1,4 +1,4 @@
-//
+//!
 //  YYCategoriesMacro.h
 //  YYCategories <https://github.com/ibireme/YYCategories>
 //
@@ -36,7 +36,7 @@ YY_EXTERN_C_BEGIN
 #define YY_SWAP(_a_, _b_)  do { __typeof__(_a_) _tmp_ = (_a_); (_a_) = (_b_); (_b_) = _tmp_; } while (0)
 #endif
 
-
+///NSAssert引用了self NSCAssert没有
 #define YYAssertNil(condition, description, ...) NSAssert(!(condition), (description), ##__VA_ARGS__)
 #define YYCAssertNil(condition, description, ...) NSCAssert(!(condition), (description), ##__VA_ARGS__)
 
@@ -229,6 +229,7 @@ static inline void YYBenchmark(void (^block)(void), void (^complete)(double ms))
     gettimeofday(&t0, NULL);
     block();
     gettimeofday(&t1, NULL);
+    //tv_sec 秒 tv_usec 微秒 ms毫秒
     double ms = (double)(t1.tv_sec - t0.tv_sec) * 1e3 + (double)(t1.tv_usec - t0.tv_usec) * 1e-3;
     complete(ms);
 }
@@ -251,6 +252,8 @@ static inline NSDate *_YYCompileTime(const char *data, const char *time) {
 #define YYCompileTime() _YYCompileTime(__DATE__, __TIME__)
 #endif
 
+//dispatch_walltime用的是绝对时间 比如定时5分钟后执行 然后关机4分钟 再重启
+//重启后1分钟dispatch_walltime 重启后5分钟dispatch_time执行
 /**
  Returns a dispatch_time delay from now.
  */
@@ -275,6 +278,7 @@ static inline dispatch_time_t dispatch_walltime_date(NSDate *date) {
     dispatch_time_t milestone;
     
     interval = [date timeIntervalSince1970];
+    //得到interval的小数部分
     subsecond = modf(interval, &second);
     time.tv_sec = second;
     time.tv_nsec = subsecond * NSEC_PER_SEC;
@@ -286,6 +290,7 @@ static inline dispatch_time_t dispatch_walltime_date(NSDate *date) {
  Whether in main queue/thread.
  */
 static inline bool dispatch_is_main_queue() {
+    /* returns non-zero if the current thread is the main thread */
     return pthread_main_np() != 0;
 }
 
