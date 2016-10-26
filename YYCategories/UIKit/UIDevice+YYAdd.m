@@ -25,6 +25,7 @@ YYSYNTH_DUMMY_CLASS(UIDevice_YYAdd)
 
 @implementation UIDevice (YYAdd)
 
+/// 系统版本
 + (double)systemVersion {
     static double version;
     static dispatch_once_t onceToken;
@@ -34,6 +35,7 @@ YYSYNTH_DUMMY_CLASS(UIDevice_YYAdd)
     return version;
 }
 
+/// 是否为iPad userInterfaceIdiom
 - (BOOL)isPad {
     static dispatch_once_t one;
     static BOOL pad;
@@ -43,6 +45,7 @@ YYSYNTH_DUMMY_CLASS(UIDevice_YYAdd)
     return pad;
 }
 
+/// 通过model是否含Simulator来判断
 - (BOOL)isSimulator {
     static dispatch_once_t one;
     static BOOL simu;
@@ -52,6 +55,7 @@ YYSYNTH_DUMMY_CLASS(UIDevice_YYAdd)
     return simu;
 }
 
+/// 通过查找是否存在越狱相关的目录 或者尝试打开bin/bash目录 或者想private写入一个文件来判断是否越狱设备
 - (BOOL)isJailbroken {
     if ([self isSimulator]) return NO; // Dont't check simulator
     
@@ -148,7 +152,6 @@ typedef struct {
     uint64_t awdl_out;
 } yy_net_interface_counter;
 
-
 static uint64_t yy_net_counter_add(uint64_t counter, uint64_t bytes) {
     if (bytes < (counter % 0xFFFFFFFF)) {
         counter += 0xFFFFFFFF - (counter % 0xFFFFFFFF);
@@ -170,6 +173,7 @@ static uint64_t yy_net_counter_get_by_type(yy_net_interface_counter *counter, YY
     return bytes;
 }
 
+/// 获取所有类型网络的接收和发送量
 static yy_net_interface_counter yy_get_net_interface_counter() {
     static dispatch_semaphore_t lock;
     static NSMutableDictionary *sharedInCounters;
@@ -200,10 +204,10 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
                     counter_out = yy_net_counter_add(counter_out, data->ifi_obytes);
                     sharedOutCounters[name] = @(counter_out);
                     
-                    if ([name hasPrefix:@"en"]) {
+                    if ([name hasPrefix:@"en"]) {// WIFI
                         counter.en_in += counter_in;
                         counter.en_out += counter_out;
-                    } else if ([name hasPrefix:@"awdl"]) {
+                    } else if ([name hasPrefix:@"awdl"]) {// AirDrop
                         counter.awdl_in += counter_in;
                         counter.awdl_out += counter_out;
                     } else if ([name hasPrefix:@"pdp_ip"]) {
@@ -330,11 +334,13 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return name;
 }
 
+/// 系统启动到现在的时间 重启后重置
 - (NSDate *)systemUptime {
     NSTimeInterval time = [[NSProcessInfo processInfo] systemUptime];
     return [[NSDate alloc] initWithTimeIntervalSinceNow:(0 - time)];
 }
 
+/// 磁盘总大小
 - (int64_t)diskSpace {
     NSError *error = nil;
     NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfFileSystemForPath:NSHomeDirectory() error:&error];
@@ -344,6 +350,7 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return space;
 }
 
+/// 可用大小
 - (int64_t)diskSpaceFree {
     NSError *error = nil;
     NSDictionary *attrs = [[NSFileManager defaultManager] attributesOfFileSystemForPath:NSHomeDirectory() error:&error];
@@ -353,6 +360,7 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return space;
 }
 
+/// 已用大小
 - (int64_t)diskSpaceUsed {
     int64_t total = self.diskSpace;
     int64_t free = self.diskSpaceFree;
@@ -362,12 +370,14 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return used;
 }
 
+/// 内存大小
 - (int64_t)memoryTotal {
     int64_t mem = [[NSProcessInfo processInfo] physicalMemory];
     if (mem < -1) mem = -1;
     return mem;
 }
 
+/// 已用内存
 - (int64_t)memoryUsed {
     mach_port_t host_port = mach_host_self();
     mach_msg_type_number_t host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
@@ -382,6 +392,7 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return page_size * (vm_stat.active_count + vm_stat.inactive_count + vm_stat.wire_count);
 }
 
+/// 可用内存
 - (int64_t)memoryFree {
     mach_port_t host_port = mach_host_self();
     mach_msg_type_number_t host_size = sizeof(vm_statistics_data_t) / sizeof(integer_t);
@@ -452,10 +463,12 @@ static yy_net_interface_counter yy_get_net_interface_counter() {
     return vm_stat.purgeable_count * page_size;
 }
 
+/// 处理器数量
 - (NSUInteger)cpuCount {
     return [NSProcessInfo processInfo].activeProcessorCount;
 }
 
+/// CPU使用率
 - (float)cpuUsage {
     float cpu = 0;
     NSArray *cpus = [self cpuUsagePerProcessor];

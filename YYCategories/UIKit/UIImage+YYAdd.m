@@ -329,6 +329,8 @@ static NSTimeInterval _yy_CGImageSourceGetGIFFrameDelayAtIndex(CGImageSourceRef 
     return image;
 }
 
+
+///insets负数 相当于相框效果
 - (UIImage *)imageByInsetEdge:(UIEdgeInsets)insets withColor:(UIColor *)color {
     CGSize size = self.size;
     size.width -= insets.left + insets.right;

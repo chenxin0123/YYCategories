@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  Observer with block (KVO).
+ 
+ 使用关联对象保存了一个字典 字典的键为keyPath 值为_YYNSObjectKVOBlockTarget对象的数组 _YYNSObjectKVOBlockTarget对象就是监听者 它在监听回调中调用block
+ 
  */
 @interface NSObject (YYAddForKVO)
 

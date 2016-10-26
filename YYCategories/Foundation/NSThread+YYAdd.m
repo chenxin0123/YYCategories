@@ -30,7 +30,6 @@ static void PoolStackReleaseCallBack(CFAllocatorRef allocator, const void *value
     CFRelease((CFTypeRef)value);
 }
 
-
 static inline void YYAutoreleasePoolPush() {
     NSMutableDictionary *dic =  [NSThread currentThread].threadDictionary;
     NSMutableArray *poolStack = dic[YYNSThreadAutoleasePoolStackKey];
@@ -57,6 +56,7 @@ static inline void YYAutoreleasePoolPop() {
     [poolStack removeLastObject]; // pop
 }
 
+/// pushObserver popObserver 回调
 static void YYRunLoopAutoreleasePoolObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info) {
     switch (activity) {
         case kCFRunLoopEntry: {
@@ -95,6 +95,7 @@ static void YYRunloopAutoreleasePoolSetup() {
 
 @implementation NSThread (YYAdd)
 
+/// 向当前线程添加runroop
 + (void)addAutoreleasePoolToCurrentRunloop {
     if ([NSThread isMainThread]) return; // The main thread already has autorelease pool.
     NSThread *thread = [self currentThread];

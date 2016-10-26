@@ -123,7 +123,7 @@ YYSYNTH_DUMMY_CLASS(NSString_YYAdd)
         while (index < self.length) {
             NSUInteger length = MIN(self.length - index, batchSize);
             NSRange range = NSMakeRange(index, length);
-            // To avoid breaking up character sequences such as 👴🏻👮🏽
+            // To avoid breaking up character sequences such as 👴🏻👮🏽 这俩表情8个长度 24个字节
             range = [self rangeOfComposedCharacterSequencesForRange:range];
             NSString *substring = [self substringWithRange:range];
             NSString *encoded = [substring stringByAddingPercentEncodingWithAllowedCharacters:allowedCharacterSet];
@@ -197,7 +197,7 @@ YYSYNTH_DUMMY_CLASS(NSString_YYAdd)
     free(buf);
     return result;
 }
-
+ 
 - (CGSize)sizeForFont:(UIFont *)font size:(CGSize)size mode:(NSLineBreakMode)lineBreakMode {
     CGSize result;
     if (!font) font = [UIFont systemFontOfSize:12];
@@ -301,6 +301,7 @@ YYSYNTH_DUMMY_CLASS(NSString_YYAdd)
     return (__bridge_transfer NSString *)string;
 }
 
+/// 0X00000033 - @"3"
 + (NSString *)stringWithUTF32Char:(UTF32Char)char32 {
     char32 = NSSwapHostIntToLittle(char32);
     return [[NSString alloc] initWithBytes:&char32 length:4 encoding:NSUTF32LittleEndianStringEncoding];

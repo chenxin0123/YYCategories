@@ -49,6 +49,7 @@ YYSYNTH_DUMMY_CLASS(NSDictionary_YYAdd)
 #define XMLName @"_name"
 #define XMLPref @"_"
 
+/// 将_text 放入_stack最后一项中
 - (void)textEnd {
     _text = _text.stringByTrim.mutableCopy;
     if (_text.length) {

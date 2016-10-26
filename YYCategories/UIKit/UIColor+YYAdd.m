@@ -17,7 +17,7 @@ YYSYNTH_DUMMY_CLASS(UIColor_YYAdd)
 
 
 #define CLAMP_COLOR_VALUE(v) (v) = (v) < 0 ? 0 : (v) > 1 ? 1 : (v)
-
+/// 色相(H)、饱和度(S)、明度(L)
 void YY_RGB2HSL(CGFloat r, CGFloat g, CGFloat b,
                 CGFloat *h, CGFloat *s, CGFloat *l) {
     CLAMP_COLOR_VALUE(r);
@@ -81,6 +81,7 @@ void YY_HSL2RGB(CGFloat h, CGFloat s, CGFloat l,
     }
 }
 
+/// HSB=HSV(Hue, Saturation, Value)(色相,饱和度,色调)
 void YY_RGB2HSB(CGFloat r, CGFloat g, CGFloat b,
                 CGFloat *h, CGFloat *s, CGFloat *v) {
     CLAMP_COLOR_VALUE(r);
@@ -134,6 +135,7 @@ void YY_HSB2RGB(CGFloat h, CGFloat s, CGFloat v,
     }
 }
 
+/// CMYK 印刷四色模式是彩色印刷时采用的一种套色模式
 void YY_RGB2CMYK(CGFloat r, CGFloat g, CGFloat b,
                  CGFloat *c, CGFloat *m, CGFloat *y, CGFloat *k) {
     CLAMP_COLOR_VALUE(r);
@@ -259,6 +261,7 @@ void YY_HSL2HSB(CGFloat h, CGFloat s, CGFloat l,
 
 static inline NSUInteger hexStrToInt(NSString *str) {
     uint32_t result = 0;
+    // 从一个字符串中读进与指定格式相符的数据
     sscanf([str UTF8String], "%X", &result);
     return result;
 }

@@ -179,6 +179,7 @@ YYSYNTH_DUMMY_CLASS(NSData_YYAdd)
     return hash;
 }
 
+///HMAC是密钥相关的哈希运算消息认证码 需要一个秘钥参与计算
 - (NSData *)hmacDataUsingAlg:(CCHmacAlgorithm)alg withKey:(NSData *)key {
     size_t size;
     switch (alg) {
@@ -243,6 +244,7 @@ YYSYNTH_DUMMY_CLASS(NSData_YYAdd)
     return [self hmacDataUsingAlg:kCCHmacAlgSHA512 withKey:key];
 }
 
+///CRC的全称是循环冗余校验
 - (NSString *)crc32String {
     uLong result = crc32(0, self.bytes, (uInt)self.length);
     return [NSString stringWithFormat:@"%08x", (uint32_t)result];
@@ -354,6 +356,7 @@ YYSYNTH_DUMMY_CLASS(NSData_YYAdd)
     for (i = 0; i < len / 2; i++) {
         str[0] = buf[i * 2];
         str[1] = buf[i * 2 + 1];
+        //将str中的16进制内容转换成长整型数
         bytes = strtol(str, NULL, 16);
         [result appendBytes:&bytes length:1];
     }

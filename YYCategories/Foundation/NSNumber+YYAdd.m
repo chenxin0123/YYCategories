@@ -18,12 +18,14 @@ YYSYNTH_DUMMY_CLASS(NSNumber_YYAdd)
 
 @implementation NSNumber (YYAdd)
 
+///将字符串转为NSNumber
 + (NSNumber *)numberWithString:(NSString *)string {
     NSString *str = [[string stringByTrim] lowercaseString];
     if (!str || !str.length) {
         return nil;
     }
     
+    // Boolean
     static NSDictionary *dic;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -45,9 +47,10 @@ YYSYNTH_DUMMY_CLASS(NSNumber_YYAdd)
     int sign = 0;
     if ([str hasPrefix:@"0x"]) sign = 1;
     else if ([str hasPrefix:@"-0x"]) sign = -1;
-    if (sign != 0) {
+    if (sign != 0) {//hex
         NSScanner *scan = [NSScanner scannerWithString:str];
         unsigned num = -1;
+        //根据字符串的类型调用不同的方法
         BOOL suc = [scan scanHexInt:&num];
         if (suc)
             return [NSNumber numberWithLong:((long)num * sign)];
