@@ -252,8 +252,8 @@ static inline NSDate *_YYCompileTime(const char *data, const char *time) {
 #define YYCompileTime() _YYCompileTime(__DATE__, __TIME__)
 #endif
 
-//dispatch_walltime用的是绝对时间 比如定时5分钟后执行 然后关机4分钟 再重启
-//重启后1分钟dispatch_walltime 重启后5分钟dispatch_time执行
+// dispatch_walltime用的是绝对时间 看下面链接 不过在iPhone上可能没什么区别
+// http://stackoverflow.com/questions/26062702/what-is-the-difference-between-dispatch-time-and-dispatch-walltime-and-in-what-s
 /**
  Returns a dispatch_time delay from now.
  */
